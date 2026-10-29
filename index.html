@@ -399,6 +399,51 @@ footer p + p {
 .card:hover .picture img {
   transform: scale(1.04);
 }
+/* Pilihan nominal donasi */
+.amount-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.amount-btn {
+  padding: 12px 8px;
+  background: white;
+  color: #15803d;
+  border: 1px solid #bbdfc5;
+  border-radius: 9px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.amount-btn:hover,
+.amount-btn.active {
+  background: #15803d;
+  color: white;
+  border-color: #15803d;
+}
+
+.summary {
+  margin-top: 22px;
+  padding: 16px;
+  background: #f0fdf4;
+  border: 1px solid #dcfce7;
+  border-radius: 10px;
+}
+
+.summary p {
+  margin: 5px 0;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 380px) {
+  .amount-options {
+    grid-template-columns: 1fr;
+  }
+}
+
   </style>
 </head>
 <body>
@@ -486,33 +531,58 @@ footer p + p {
         <p>Pelajari cara kerja formulir interaktif.</p>
       </div>
 
-      <form id="donationForm">
-        <div class="notice">
-          MODE DEMO — formulir ini tidak mengirim uang, menyimpan data,
-          atau memproses pembayaran sungguhan.
-        </div>
 
-        <label for="name">Nama donatur</label>
-        <input id="name" type="text" placeholder="Masukkan nama contoh" required>
+<form id="donationForm">
+  <div class="notice">
+    MODE DEMO — formulir ini tidak memproses pembayaran
+    atau mengirim uang sungguhan.
+  </div>
 
-        <label for="programChoice">Pilih program</label>
-        <select id="programChoice">
-          <option>Bantu Pendidikan Anak</option>
-          <option>Berbagi Pangan</option>
-          <option>Peduli Lingkungan</option>
-        </select>
+  <label for="name">Nama donatur</label>
+  <input
+    id="name"
+    type="text"
+    placeholder="Masukkan nama"
+    maxlength="80"
+    autocomplete="name"
+    required
+  >
 
-        <label for="amount">Nominal donasi (Rp)</label>
-        <select id="amount">
-          <option value="10000">Rp10.000</option>
-          <option value="25000">Rp25.000</option>
-          <option value="50000">Rp50.000</option>
-          <option value="100000">Rp100.000</option>
-        </select>
+  <label for="programChoice">Pilih program</label>
+  <select id="programChoice">
+    <option value="Bantu Pendidikan Anak">Bantu Pendidikan Anak</option>
+    <option value="Berbagi Pangan">Berbagi Pangan</option>
+    <option value="Peduli Lingkungan">Peduli Lingkungan</option>
+  </select>
 
-        <button class="button" type="submit">Uji Formulir Demo</button>
-        <div id="message" role="status" aria-live="polite"></div>
-      </form>
+  <label>Nominal donasi</label>
+  <div class="amount-options">
+    <button type="button" class="amount-btn" data-amount="10000">Rp10.000</button>
+    <button type="button" class="amount-btn" data-amount="25000">Rp25.000</button>
+    <button type="button" class="amount-btn" data-amount="50000">Rp50.000</button>
+    <button type="button" class="amount-btn" data-amount="100000">Rp100.000</button>
+  </div>
+
+  <label for="customAmount">Atau masukkan nominal sendiri (Rp)</label>
+  <input
+    id="customAmount"
+    type="number"
+    min="1000"
+    max="100000000"
+    step="1000"
+    placeholder="Minimal Rp1.000"
+    inputmode="numeric"
+  >
+
+  <div class="summary">
+    <p class="muted">Ringkasan pilihan demo</p>
+    <p>Program: <strong id="summaryProgram">Bantu Pendidikan Anak</strong></p>
+    <p>Nominal: <strong id="summaryAmount">Rp10.000</strong></p>
+  </div>
+
+  <button class="button" type="submit">Uji Donasi Demo</button>
+  <div id="message" role="status" aria-live="polite"></div>
+</form>
     </section>
 
     <section id="tentang">
@@ -531,35 +601,102 @@ footer p + p {
   </footer>
 
   <script>
-    const form = document.getElementById("donationForm");
-    const message = document.getElementById("message");
 
-    form.addEventListener("submit", function(event) {
-      event.preventDefault();
+const form = document.getElementById("donationForm");
+const nameInput = document.getElementById("name");
+const programChoice = document.getElementById("programChoice");
+const customAmount = document.getElementById("customAmount");
+const message = document.getElementById("message");
 
-      const name = document.getElementById("name").value.trim();
-      const program = document.getElementById("programChoice").value;
-      const amount = Number(document.getElementById("amount").value);
+const summaryProgram = document.getElementById("summaryProgram");
+const summaryAmount = document.getElementById("summaryAmount");
+const amountButtons = document.querySelectorAll(".amount-btn");
 
-      if (!name) return;
+let selectedAmount = 10000;
 
-      const rupiah = new Intl.NumberFormat("id-ID", {
-        style: "currency",
-        currency: "IDR",
-        maximumFractionDigits: 0
-      }).format(amount);
-
-      message.textContent =
-        "Simulasi berhasil! Terima kasih, " + name +
-        ". Pilihan: " + program + ", nominal " + rupiah +
-        ". Tidak ada pembayaran yang dilakukan.";
-
-      form.reset();
-    });
-function pilihProgram(namaProgram) {
-  const pilihan = document.getElementById("programChoice");
-  pilihan.value = namaProgram;
+function formatRupiah(amount) {
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    maximumFractionDigits: 0
+  }).format(amount);
 }
+
+function updateSummary() {
+  summaryProgram.textContent = programChoice.value;
+
+  const amount = customAmount.value !== ""
+    ? Number(customAmount.value)
+    : selectedAmount;
+
+  summaryAmount.textContent =
+    Number.isFinite(amount) && amount > 0
+      ? formatRupiah(amount)
+      : "Nominal belum valid";
+}
+
+function pilihProgram(namaProgram) {
+  programChoice.value = namaProgram;
+  updateSummary();
+}
+
+amountButtons.forEach(function(button) {
+  button.addEventListener("click", function() {
+    selectedAmount = Number(button.dataset.amount);
+    customAmount.value = "";
+
+    amountButtons.forEach(function(item) {
+      item.classList.remove("active");
+    });
+
+    button.classList.add("active");
+    message.textContent = "";
+    updateSummary();
+  });
+});
+
+customAmount.addEventListener("input", function() {
+  amountButtons.forEach(function(button) {
+    button.classList.remove("active");
+  });
+
+  message.textContent = "";
+  updateSummary();
+});
+
+programChoice.addEventListener("change", updateSummary);
+
+form.addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  const name = nameInput.value.trim();
+  const amount = customAmount.value !== ""
+    ? Number(customAmount.value)
+    : selectedAmount;
+
+  if (!name) {
+    message.textContent = "Silakan masukkan nama terlebih dahulu.";
+    return;
+  }
+
+  if (!Number.isFinite(amount) || amount < 1000 ||
+      amount > 100000000 || !Number.isInteger(amount)) {
+    message.textContent =
+      "Nominal harus berupa bilangan bulat Rp1.000 sampai Rp100.000.000.";
+    return;
+  }
+
+  message.textContent =
+    "Simulasi berhasil! Terima kasih, " + name +
+    ". Program: " + programChoice.value +
+    ". Nominal: " + formatRupiah(amount) +
+    ". Tidak ada pembayaran sungguhan yang dilakukan.";
+
+  message.style.color = "#15803d";
+});
+
+updateSummary();
+
   </script>
 </body>
 </html>
