@@ -522,6 +522,29 @@ footer p + p {
   }
 }
 
+nav a.active {
+  color: #15803d;
+  font-weight: 800;
+  position: relative;
+}
+
+nav a.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -7px;
+  height: 3px;
+  border-radius: 3px;
+  background: #15803d;
+}
+
+@media (max-width: 600px) {
+  nav a.active::after {
+    bottom: -4px;
+  }
+}
+
   </style>
 </head>
 <body>
@@ -782,6 +805,41 @@ form.addEventListener("submit", function(event) {
 });
 
 updateSummary();
+
+const navLinks = document.querySelectorAll("nav a");
+
+const pageSections = document.querySelectorAll(
+  "#beranda, #program, #donasi, #tentang"
+);
+
+function updateActiveNav() {
+  let currentSection = "beranda";
+
+  pageSections.forEach(function(section) {
+    const sectionTop = section.getBoundingClientRect().top;
+
+    if (sectionTop <= 150) {
+      currentSection = section.id;
+    }
+  });
+
+  navLinks.forEach(function(link) {
+    const isActive = link.getAttribute("href") === "#" + currentSection;
+
+    link.classList.toggle("active", isActive);
+
+    if (isActive) {
+      link.setAttribute("aria-current", "location");
+    } else {
+      link.removeAttribute("aria-current");
+    }
+  });
+}
+
+window.addEventListener("scroll", updateActiveNav);
+window.addEventListener("load", updateActiveNav);
+
+updateActiveNav();
 
 const backToTop = document.getElementById("backToTop");
 
