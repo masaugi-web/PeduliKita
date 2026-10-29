@@ -485,6 +485,43 @@ footer p + p {
   margin: 8px 0;
 }
 
+    
+#backToTop {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 50%;
+  background: #15803d;
+  color: white;
+  font-size: 26px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 5px 15px #0002;
+  z-index: 100;
+  display: none;
+  transition: background 0.2s, transform 0.2s;
+}
+
+#backToTop:hover {
+  background: #14532d;
+  transform: translateY(-3px);
+}
+
+#backToTop:focus-visible {
+  outline: 3px solid #86efac;
+  outline-offset: 3px;
+}
+
+@media (max-width: 600px) {
+  #backToTop {
+    right: 16px;
+    bottom: 16px;
+  }
+}
+
   </style>
 </head>
 <body>
@@ -746,6 +783,24 @@ form.addEventListener("submit", function(event) {
 
 updateSummary();
 
-  </script>
+const backToTop = document.getElementById("backToTop");
+
+window.addEventListener("scroll", function () {
+  backToTop.style.display = window.scrollY > 300 ? "block" : "none";
+});
+
+backToTop.addEventListener("click", function () {
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+});
+
+  </script>+
+  
+<button id="backToTop" type="button" aria-label="Kembali ke atas" title="Kembali ke atas">
+  ↑
+</button>
+
 </body>
 </html>
