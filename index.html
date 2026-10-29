@@ -379,6 +379,26 @@ footer p + p {
     padding: 22px;
   }
 }
+/* Foto kampanye */
+.picture {
+  height: 200px;
+  min-height: 0;
+  overflow: hidden;
+  padding: 0;
+}
+
+.picture img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.3s ease;
+}
+
+.card:hover .picture img {
+  transform: scale(1.04);
+}
   </style>
 </head>
 <body>
@@ -408,7 +428,9 @@ footer p + p {
 
       <div class="campaigns">
         <article class="card">
-          <div class="picture">📚</div>
+<div class="picture">
+  <img src="pendidikan.jpg" alt="Kegiatan belajar anak">
+</div>
           <div class="card-content">
             <h3>Bantu Pendidikan Anak</h3>
             <p class="muted">Mendukung kebutuhan belajar dan perlengkapan sekolah.</p>
@@ -420,7 +442,9 @@ footer p + p {
         </article>
 
         <article class="card">
-          <div class="picture">🍚</div>
+<div class="picture">
+  <img src="pangan.jpg" alt="Bantuan bahan pangan">
+</div>
           <div class="card-content">
             <h3>Berbagi Pangan</h3>
             <p class="muted">Contoh program berbagi kebutuhan pokok bagi sesama.</p>
@@ -432,7 +456,9 @@ footer p + p {
         </article>
 
         <article class="card">
-          <div class="picture">🌱</div>
+<div class="picture">
+  <img src="lingkungan.jpg" alt="Kegiatan penghijauan">
+</div>
           <div class="card-content">
             <h3>Peduli Lingkungan</h3>
             <p class="muted">Contoh kegiatan penghijauan dan perawatan lingkungan.</p>
