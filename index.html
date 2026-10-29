@@ -437,7 +437,10 @@ footer p + p {
             <div class="progress"><div style="width:65%"></div></div>
             <div class="amount"><strong>Rp6.500.000</strong> terkumpul</div>
             <div class="muted">Target demo: Rp10.000.000</div>
-            <p><a class="button" href="#donasi">Pilih Donasi</a></p>
+<a class="button" href="#donasi"
+   onclick="pilihProgram('Bantu Pendidikan Anak')">
+  Pilih Donasi
+</a>
           </div>
         </article>
 
@@ -451,7 +454,10 @@ footer p + p {
             <div class="progress"><div style="width:40%"></div></div>
             <div class="amount"><strong>Rp2.000.000</strong> terkumpul</div>
             <div class="muted">Target demo: Rp5.000.000</div>
-            <p><a class="button" href="#donasi">Pilih Donasi</a></p>
+<a class="button" href="#donasi"
+   onclick="pilihProgram('Berbagi Pangan')">
+  Pilih Donasi
+</a>
           </div>
         </article>
 
@@ -465,7 +471,10 @@ footer p + p {
             <div class="progress"><div style="width:30%"></div></div>
             <div class="amount"><strong>Rp1.500.000</strong> terkumpul</div>
             <div class="muted">Target demo: Rp5.000.000</div>
-            <p><a class="button" href="#donasi">Pilih Donasi</a></p>
+<a class="button" href="#donasi"
+   onclick="pilihProgram('Peduli Lingkungan')">
+  Pilih Donasi
+</a>
           </div>
         </article>
       </div>
@@ -547,6 +556,10 @@ footer p + p {
 
       form.reset();
     });
+function pilihProgram(namaProgram) {
+  const pilihan = document.getElementById("programChoice");
+  pilihan.value = namaProgram;
+}
   </script>
 </body>
 </html>
